@@ -90,6 +90,33 @@ router.post('/authenticate', (req, res) => {
         });
 });
 
+// Get user by email (for authentication)
+router.post('/getbyemail', (req, res) => {
+    // Verify token
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    
+    if (!token) return res.status(401).json({ message: 'Access Denied' });
+    
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+        if (err) return res.status(403).json({ message: 'Invalid Token' });
+        
+        // Token is valid, proceed to get user by email
+        Model.findOne({ email: req.body.email })
+            .select('-password') // Exclude password from the result
+            .then((result) => {
+                if (result) {
+                    res.status(200).json(result);
+                } else {
+                    res.status(404).json({ message: 'User not found' });
+                }
+            }).catch((err) => {
+                console.log(err);
+                res.status(500).json({ message: 'Internal Server Error' });
+            });
+    });
+});
+
 
 
 module.exports = router;

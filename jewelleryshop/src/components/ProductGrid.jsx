@@ -1,13 +1,15 @@
 'use client'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ProductCard from './ProductCard';
+
+const DOLLAR_TO_INR = 83; // Same conversion rate as in ProductCard
 
 export default function ProductGrid({ products }) {
   const [filteredProducts, setFilteredProducts] = useState(products);
   const [activeFilters, setActiveFilters] = useState({
     category: [],
     material: [],
-    priceRange: { min: 0, max: 10000 }
+    priceRange: { min: 0, max: 1000000 } // Increased for INR values
   });
 
   // Categories for jewelry
@@ -54,9 +56,13 @@ export default function ProductGrid({ products }) {
 
   // Handle price range filter changes
   const handlePriceChange = (min, max) => {
+    // Ensure min and max are valid numbers
+    const validMin = isNaN(min) ? 0 : min;
+    const validMax = isNaN(max) ? 1000000 : max;
+    
     setActiveFilters(prev => ({
       ...prev,
-      priceRange: { min, max }
+      priceRange: { min: validMin, max: validMax }
     }));
   };
 
@@ -78,25 +84,30 @@ export default function ProductGrid({ products }) {
       );
     }
     
-    // Filter by price range
+    // Filter by price range (in INR)
     result = result.filter(product => {
-      const price = product.discount > 0
-        ? product.price * (1 - product.discount / 100)
-        : product.price;
+      const priceInINR = product.discount > 0
+        ? product.price * (1 - product.discount / 100) * DOLLAR_TO_INR
+        : product.price * DOLLAR_TO_INR;
       
-      return price >= activeFilters.priceRange.min && 
-             price <= activeFilters.priceRange.max;
+      return priceInINR >= activeFilters.priceRange.min && 
+             priceInINR <= activeFilters.priceRange.max;
     });
     
     setFilteredProducts(result);
   };
+  
+  // Apply filters whenever activeFilters changes
+  useEffect(() => {
+    applyFilters();
+  }, [activeFilters]);
 
   // Reset all filters
   const resetFilters = () => {
     setActiveFilters({
       category: [],
       material: [],
-      priceRange: { min: 0, max: 10000 }
+      priceRange: { min: 0, max: 1000000 }
     });
     setFilteredProducts(products);
   };
@@ -135,32 +146,38 @@ export default function ProductGrid({ products }) {
         </div>
 
         <div className="filter-group">
-          <h3>Price Range</h3>
+          <h3>Price Range (₹)</h3>
           <div className="price-range">
             <input
               type="range"
               min="0"
-              max="10000"
-              step="100"
-              value={activeFilters.priceRange.min}
-              onChange={(e) => handlePriceChange(parseInt(e.target.value), activeFilters.priceRange.max)}
+              max="1000000"
+              step="5000"
+              value={activeFilters.priceRange.min || 0}
+              onChange={(e) => handlePriceChange(parseInt(e.target.value || 0), activeFilters.priceRange.max)}
             />
             <div className="price-inputs">
-              <input
-                type="number"
-                min="0"
-                max={activeFilters.priceRange.max}
-                value={activeFilters.priceRange.min}
-                onChange={(e) => handlePriceChange(parseInt(e.target.value), activeFilters.priceRange.max)}
-              />
+              <div className="price-input-wrapper">
+                <span>₹</span>
+                <input
+                  type="number"
+                  min="0"
+                  max={activeFilters.priceRange.max || 1000000}
+                  value={activeFilters.priceRange.min || 0}
+                  onChange={(e) => handlePriceChange(parseInt(e.target.value || 0), activeFilters.priceRange.max)}
+                />
+              </div>
               <span>to</span>
-              <input
-                type="number"
-                min={activeFilters.priceRange.min}
-                max="10000"
-                value={activeFilters.priceRange.max}
-                onChange={(e) => handlePriceChange(activeFilters.priceRange.min, parseInt(e.target.value))}
-              />
+              <div className="price-input-wrapper">
+                <span>₹</span>
+                <input
+                  type="number"
+                  min={activeFilters.priceRange.min || 0}
+                  max="1000000"
+                  value={activeFilters.priceRange.max || 1000000}
+                  onChange={(e) => handlePriceChange(activeFilters.priceRange.min, parseInt(e.target.value || 1000000))}
+                />
+              </div>
             </div>
           </div>
         </div>

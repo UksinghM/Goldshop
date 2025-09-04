@@ -63,21 +63,21 @@ router.put('/update/:id', (req, res) => {
 })
 
 router.post('/authenticate', (req, res) => {
-    Model.findOne(req.body)
+    Model.findOne({ email: req.body.email })
         .then((result) => {
-            if(result){
+            if(result && result.password === req.body.password){
                 // email and password match
                 // generate token
 
-                const { _id, email, password} = result;
-                const payload = { _id, email, password};
+                const { _id, email, password, role } = result;
+                const payload = { _id, email, password, role };
 
                 jwt.sign(payload, process.env.JWT_SECRET, {expiresIn: '1d'}, (err, token) => {
                     if(err){
                         console.log(err);
                         res.status(500).json(err);
                     }else{
-                        res.status(200).json({token});
+                        res.status(200).json({token, role: result.role});
                     }
                 } )
 
@@ -115,6 +115,32 @@ router.post('/getbyemail', (req, res) => {
                 res.status(500).json({ message: 'Internal Server Error' });
             });
     });
+});
+
+// Create admin user (protected with secret key)
+router.post('/createadmin', (req, res) => {
+    // Check if the secret key matches
+    const { adminSecretKey, ...userData } = req.body;
+    
+    if (adminSecretKey !== process.env.ADMIN_SECRET_KEY) {
+        return res.status(403).json({ message: 'Invalid admin secret key' });
+    }
+    
+    // Set role to admin
+    userData.role = 'admin';
+    
+    new Model(userData).save()
+        .then((result) => {
+            res.status(200).json(result);
+        }).catch((err) => {
+            console.log(err);
+            if (err.code === 11000) {
+                res.status(400).json({message: 'User Email Already Exists'});
+            }
+            else {
+                res.status(500).json({message: 'Internal Server Error'});
+            }
+        });
 });
 
 

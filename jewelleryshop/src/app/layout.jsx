@@ -3,6 +3,7 @@ import './globals.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { AuthProvider } from '../context/AuthContext';
+import { AdminProvider } from '../context/AdminContext';
 
 export const metadata = {
   title: 'Elegance Jewels - Premium Jewelry Collection',
@@ -15,9 +16,11 @@ export default function RootLayout({ children }) {
       <head />
       <body>
         <AuthProvider>
-          <Header />
-          <main className="main-content">{children}</main>
-          <Footer />
+          <AdminProvider>
+            <Header />
+            <main className="main-content">{children}</main>
+            <Footer />
+          </AdminProvider>
         </AuthProvider>
       </body>
     </html>

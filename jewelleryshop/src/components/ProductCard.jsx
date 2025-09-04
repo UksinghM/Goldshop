@@ -6,10 +6,8 @@ const DOLLAR_TO_INR = 83; // Example conversion rate
 
 export default function ProductCard({ product }) {
   // Convert prices to INR
-  const originalPriceINR = product.price * DOLLAR_TO_INR;
-  const discountedPriceINR = product.discount > 0 
-    ? product.price * (1 - product.discount / 100) * DOLLAR_TO_INR 
-    : originalPriceINR;
+  const originalPriceINR = product.originalPrice * DOLLAR_TO_INR;
+  const discountedPriceINR = product.discountedPrice * DOLLAR_TO_INR;
 
   return (
     <div className="product-card">

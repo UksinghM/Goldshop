@@ -85,14 +85,14 @@ export default function ProductDetailPage({ params }) {
                   marginRight: '10px',
                   fontSize: '1.2rem'
                 }}>
-                  ${product.price.toFixed(2)}
+                  ₹{product.price.toFixed(2)}
                 </span>
                 <span style={{ 
                   color: 'var(--primary-dark)',
                   fontSize: '2rem',
                   fontWeight: '600'
                 }}>
-                  ${(product.price * (1 - product.discount / 100)).toFixed(2)}
+                  ₹{(product.price * (1 - product.discount / 100)).toFixed(2)}
                 </span>
                 <span style={{ 
                   backgroundColor: 'var(--error)', 
@@ -111,7 +111,7 @@ export default function ProductDetailPage({ params }) {
                 fontSize: '2rem',
                 fontWeight: '600'
               }}>
-                ${product.price.toFixed(2)}
+                ₹{product.price.toFixed(2)}
               </span>
             )}
           </div>

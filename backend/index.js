@@ -1,5 +1,5 @@
 const express = require('express');
-const UserRouter = require('./routers/userRouter'); //importing user router
+const userRouter = require('./routers/useRouter'); //importing user router
 const cors = require('cors');
 
 //creating new express app
@@ -16,7 +16,7 @@ app.use(cors({
 
 app.use(express.json()); //to parse json data from request body
 
-app.use('/user', UserRouter);
+app.use('/user', userRouter);
 
 //routes or endpoints
 app.get('/', (req, res) => {

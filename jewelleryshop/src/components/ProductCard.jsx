@@ -1,7 +1,14 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import React from 'react';
+
+const DOLLAR_TO_INR = 83; // Example conversion rate
 
 export default function ProductCard({ product }) {
+  // Convert prices to INR
+  const originalPriceINR = product.originalPrice * DOLLAR_TO_INR;
+  const discountedPriceINR = product.discountedPrice * DOLLAR_TO_INR;
+
   return (
     <div className="product-card">
       <div className="product-image">
@@ -24,15 +31,19 @@ export default function ProductCard({ product }) {
         <div className="product-category">{product.category}</div>
         <div className="product-material">{product.material}</div>
         <div className="product-price">
-          {product.discount > 0 ? (
+          {/* Only show prices in Indian Rupees */}
+          {discountedPriceINR < originalPriceINR ? (
             <>
-              <span className="original-price">${product.price.toFixed(2)}</span>
-              <span className="discounted-price">
-                ${(product.price * (1 - product.discount / 100)).toFixed(2)}
+              <span style={{ textDecoration: 'line-through', color: '#888' }}>
+                ₹{originalPriceINR.toLocaleString('en-IN')}
+              </span>
+              {' '}
+              <span style={{ color: '#c19a6b', fontWeight: 'bold' }}>
+                ₹{discountedPriceINR.toLocaleString('en-IN')}
               </span>
             </>
           ) : (
-            <span className="current-price">${product.price.toFixed(2)}</span>
+            <span>₹{originalPriceINR.toLocaleString('en-IN')}</span>
           )}
         </div>
         <div className="product-actions">

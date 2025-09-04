@@ -5,7 +5,7 @@ export default function ProductCard({ product }) {
   return (
     <div className="product-card">
       <div className="product-image">
-        <Link href={`/products/${product.id}`}>
+        <Link href={`/product/${product.id}`}>
           <Image 
             src={product.image} 
             alt={product.name} 
@@ -19,7 +19,7 @@ export default function ProductCard({ product }) {
       </div>
       <div className="product-info">
         <h3 className="product-name">
-          <Link href={`/products/${product.id}`}>{product.name}</Link>
+          <Link href={`/product/${product.id}`}>{product.name}</Link>
         </h3>
         <div className="product-category">{product.category}</div>
         <div className="product-material">{product.material}</div>

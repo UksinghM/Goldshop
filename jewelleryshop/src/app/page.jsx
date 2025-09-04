@@ -1,4 +1,4 @@
-// app/page.jsx
+'use client'
 import Image from 'next/image';
 import Link from 'next/link';
 import { products, categories } from '../data/products';
